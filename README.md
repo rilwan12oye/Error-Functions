@@ -6,7 +6,7 @@ This smart contract shows the solidity error-handling mechanisms which are requi
 
 The smart contract has 3 functions:
 
-- addBenefitiary: allows owner of the contract to add users to the list of beneficiary. ```require``` makes sure only the owner can call this function. It also makes sure address zero is not added as beneficiary and the claim date is in the future.
+- addBenefitiary: allows owner of the contract to add users to the list of beneficiary. ```require``` makes sure only the owner can call this function. It also makes sure address zero is not added as beneficiary and the claim date is in the future. ```assert``` makes sure the benefit amount is greater than zero.
 - claimBenefit: allows a beneficiary to claim their benefit. ```revert``` allows only a beneficiary to claim their benefit at the stipulated time and they can't claim that particular benefit more than once.
 - yourBalance: allows user to check their balance after claiming their benefit 
 
