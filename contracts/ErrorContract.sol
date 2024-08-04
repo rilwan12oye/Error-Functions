@@ -1,76 +1,62 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-contract ErrorContract {
+contract Claims {
 
-    error NOT_REGISTERED(address);
 
-    uint256 public numberOfReg;
     address immutable owner;
 
-    struct UserDetails {
+    struct Beneficiary {
         address user;
-        string username;
-        uint8 age;
+        uint256 amount;
+        uint256 claimTime;
+        bool claimed;
     }
 
-    mapping(address => UserDetails) userDetails;
+    mapping (address => Beneficiary) public beneficiaries;
+    mapping (address => uint256) balances;
 
-    event Registered(
-        address indexed user,
-        string indexed username,
-        uint256 indexed age
-    );
+    event BeneficiaryAdded(address beneficiary, uint256 amount, uint256 claimTime);
+    event Claimed(address beneficiary, uint256 amount, uint256 claimTime);
 
-    event Deleted(address indexed user);
-
-    constructor() {
+    constructor () {
         owner = msg.sender;
     }
 
-    modifier increaseNo() {
-        _;
-        numberOfReg += 1;
-    }
-
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner allowed!");
+        require(msg.sender == owner, "Only Owner");
         _;
     }
 
-    modifier isRegistered(address _user) {
-        if (userDetails[_user].user == address(0)) revert NOT_REGISTERED(_user);
-        _;
-    }
-
-    function registerUser(string memory _username, uint8 _age)
-        public
-        increaseNo
-    {
-        address _user = msg.sender;
-        require(
-            userDetails[_user].user == address(0),
-            "You are already registered!"
-        );
-        require(bytes(_username).length > 1, "Username too short");
-        assert(_age > 17);
-
-        userDetails[_user] = UserDetails(_user, _username, _age);
-        emit Registered(_user, _username, _age);
-    }
-
-    function getUser(address _user) external view isRegistered(_user) returns (UserDetails memory) {
-
-        return userDetails[_user];
-    }
-
-    function deleteUser(address _user) external onlyOwner isRegistered(_user) returns (bool) {
-        delete userDetails[_user];
-
-        numberOfReg -= 1;
-
-        emit Deleted(_user);
+    function addBenefitiary(address _recipient, uint256 _amount, uint256 _time) external onlyOwner {
         
-        return true;
+        require(_recipient != address(0), "Address zero not allowed");
+        uint256 _claimTime = block.timestamp + _time;
+        require(_claimTime > block.timestamp, "Claim time must in future");
+
+        assert(_amount > 0);
+
+        beneficiaries[_recipient] = Beneficiary(_recipient, _amount, _claimTime, false);
+
+        emit BeneficiaryAdded(_recipient, _amount, _claimTime);
+    }
+
+    function claimBenefit() external {
+        Beneficiary storage _beneficiary = beneficiaries[msg.sender];
+
+        if (_beneficiary.user == address(0)) revert("You are not a beneficiary");
+        if (_beneficiary.claimTime > block.timestamp) revert("Not yet time!!!");
+        if (_beneficiary.claimed) revert("Benefit claimed already!");
+
+        _beneficiary.claimed = true;
+
+        balances[msg.sender] = _beneficiary.amount;
+        emit Claimed(_beneficiary.user, _beneficiary.amount, block.timestamp);
+    }
+
+    function yourBalance() external view returns(uint256) {
+        uint256 _balance = balances[msg.sender];
+        require(_balance > 0, "You have no balance");
+        return _balance;
     }
 }
