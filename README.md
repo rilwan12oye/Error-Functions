@@ -27,3 +27,61 @@ Rilwan Oyewole
 
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ErrorContract
+
+This Solidity program is a simple smart contract that adds users to a beneficiary list and users can come to claim their benefit - only beneficiary can claim their benefit and they can only claim that particular benefit once. The error-handling mechanism makes sure all these rules are met. The purpose of this program is to show the error-handling mechanisms of the Solidity programming language.
+
+## Description
+
+This program is a simple contract written in Solidity, a programming language used for developing smart contracts on the Ethereum blockchain. The contract has three functions as listed below.
+
+- addBenefitiary: allows owner of the contract to add users to the list of beneficiary. ```require``` makes sure only the owner can call this function. It also makes sure address zero is not added as beneficiary and the claim date is in the future. ```assert``` makes sure the benefit amount is greater than zero.
+- claimBenefit: allows a beneficiary to claim their benefit. ```revert``` allows only a beneficiary to claim their benefit at the stipulated time and they can't claim that particular benefit more than once.
+- yourBalance: allows user to check their balance after claiming their benefit 
+
+## Getting Started
+
+### Executing program
+
+To run this program, you can use Remix, an online Solidity IDE. To get started, go to the Remix website at https://remix.ethereum.org/.
+
+Once you are on the Remix website, create a new file by clicking on the "+" icon in the left-hand sidebar. Save the file with a .sol extension (e.g., ErrorContract.sol). Copy and paste the following code into the file:
+
+```javascript
+pragma solidity ^0.8.4;
+
+contract HelloWorld {
+    function sayHello() public pure returns (string memory) {
+        return "Hello World!";
+    }
+}
+
+```
+
+To compile the code, click on the "Solidity Compiler" tab in the left-hand sidebar. Make sure the "Compiler" option is set to "0.8.17" (or another compatible version), and then click on the "Compile ErrorContract.sol" button.
+
+Once the code is compiled, you can deploy the contract by clicking on the "Deploy & Run Transactions" tab in the left-hand sidebar. Select the "ErrorContract" contract from the dropdown menu, and then click on the "Deploy" button.
+
+Once the contract is deployed, you can interact with it the contract.
+
+## Authors
+
+Rilwan Oyewole
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details
